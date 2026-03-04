@@ -1,0 +1,137 @@
+{% extends 'carros/base.html' %}
+
+{% block content %}
+<style>
+    /* 1. Reset e Esconder Navbar do base.html (Para evitar duplicados) */
+    nav, .navbar { display: none !important; }
+
+    /* 2. Criar a nova Barra Preta Centralizada manualmente */
+    .custom-header {
+        background-color: #212529;
+        height: 56px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+    .custom-header span {
+        color: white;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    /* 3. Estilização do Card */
+    .auth-page-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 90vh;
+        padding-top: 60px; /* Compensa a barra fixa */
+        background-color: #f8f9fa;
+    }
+    .auth-card {
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        border: none;
+        width: 100%;
+        max-width: 440px;
+    }
+    .auth-container input {
+        display: block;
+        width: 100%;
+        padding: 0.7rem 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        margin-top: 6px;
+        margin-bottom: 12px;
+    }
+    #pills-login input:focus { border-color: #0d6efd; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15); outline: 0; }
+    #pills-cadastro input:focus { border-color: #198754; box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15); outline: 0; }
+    
+    /* Limpeza Django */
+    .helptext, .errorlist { display: none !important; }
+</style>
+
+<div class="custom-header">
+    <span>Concessionária</span>
+</div>
+
+<div class="auth-page-wrapper">
+    <div class="card auth-card">
+        <div class="card-body p-5 auth-container tab-content">
+            
+            <div class="tab-pane fade show active" id="pills-login" role="tabpanel">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold" style="color: #2d3436;">Acesso ao Sistema</h2>
+                    <p class="text-muted small">Bem-vindo de volta! Digite suas credenciais</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="login">
+                    
+                    <label class="form-label small fw-bold text-secondary">Usuário</label>
+                    <input type="text" name="username" class="form-control" required>
+                    
+                    <label class="form-label small fw-bold text-secondary">Senha</label>
+                    <input type="password" name="password" class="form-control" required>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 mt-2" style="border-radius: 10px; background-color: #0d6efd; border: none;">
+                        Entrar
+                    </button>
+                </form>
+                <div class="text-center mt-4">
+                    <a href="javascript:void(0)" onclick="toggleAuth('register')" class="small text-decoration-none fw-bold" style="color: #0d6efd;">
+                        Ainda não tem conta? Cadastre-se
+                    </a>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-cadastro" role="tabpanel">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold" style="color: #2d3436;">Crie sua conta</h2>
+                    <p class="text-muted small">Preencha os dados abaixo</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="register">
+                    {% for field in register_form %}
+                        <label class="form-label small fw-bold text-secondary">{{ field.label }}</label>
+                        {{ field }}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-3" style="border-radius: 10px; background-color: #198754; border: none;">
+                        Finalizar Cadastro
+                    </button>
+                </form>
+                <div class="text-center mt-4">
+                    <a href="javascript:void(0)" onclick="toggleAuth('login')" class="small text-decoration-none fw-bold" style="color: #198754;">
+                        Já possui acesso? Clique aqui
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAuth(mode) {
+        const login = document.getElementById('pills-login');
+        const register = document.getElementById('pills-cadastro');
+
+        if (mode === 'login') {
+            register.classList.remove('show', 'active');
+            login.classList.add('show', 'active');
+        } else {
+            login.classList.remove('show', 'active');
+            register.classList.add('show', 'active');
+        }
+    }
+</script>
+{% endblock %}

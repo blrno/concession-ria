@@ -1,0 +1,70 @@
+{% extends 'carros/base.html' %}
+{% load l10n %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="p-5 mb-4 bg-white rounded-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Estoque de Veículos</h2>
+            <a href="{% url 'cadastrar_carro' %}" class="btn btn-success fw-bold px-4 py-2" style="border-radius: 10px;">
+                + Novo Veículo
+            </a>
+        </div>
+
+        <div class="mb-4">
+            <input type="text" id="smartSearch" class="form-control p-3 border-2" 
+                   placeholder="Pesquisar por nome, marca ou ano..." style="border-radius: 12px;">
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle" id="inventoryTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>VEÍCULO</th>
+                        <th>MARCA</th>
+                        <th>ANO</th>
+                        <th>PREÇO</th>
+                        <th class="text-end">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for carro in carros %}
+                    <tr class="car-row" data-price="{{ carro.preco }}">
+                        <td class="fw-bold">{{ carro.nome }}</td> 
+                        <td><span class="badge bg-light text-dark">{{ carro.marca }}</span></td>
+                        <td>{{ carro.ano }}</td>
+                        <td class="text-success fw-bold">R$ {{ carro.preco|localize }}</td> 
+                        <td class="text-end">
+                            <a href="#" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <a href="{% url 'excluir_carro' carro.id %}" class="btn btn-sm btn-outline-danger">Excluir</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">Nenhum veículo no estoque.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-5 pt-4 border-top text-center">
+            <div class="col-md-6">
+                <p class="text-muted small mb-0">Total em Estoque</p>
+                <h4 class="fw-bold">{{ total_veiculos }} Veículos</h4>
+            </div>
+            <div class="col-md-6">
+                <p class="text-muted small mb-0">Valor Total do Inventário</p>
+                <h4 class="fw-bold text-primary">R$ {{ valor_total|localize }}</h4> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('smartSearch').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('.car-row').forEach(row => {
+            row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+</script>
+{% endblock %}

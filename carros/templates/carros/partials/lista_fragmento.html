@@ -1,0 +1,10 @@
+{% for carro in carros %}
+    <tr>
+        <td>{{ carro.nome }}</td>
+        <td>{{ carro.marca }}</td>
+        <td>{{ carro.ano }}</td>
+        <td>R$ {{ carro.preco }}</td>
+    </tr>
+{% empty %}
+    <tr><td colspan="4" class="text-center">Nenhum veículo encontrado.</td></tr>
+{% endfor %}
